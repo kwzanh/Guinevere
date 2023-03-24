@@ -345,7 +345,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
     fstream inputData;
     inputData.open(file_input, ios::in);
     string line;
-    string data[] = {};
+    string data[100] = {};
     int line_count = 0;
     if (inputData.is_open()) {
         while (getline(inputData, data[line_count])) {
@@ -356,7 +356,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
 
     // knight's statistics input
     string knight_data = data[0];
-    int knight_stat[] = {};
+    int knight_stat[100] = {};
     int b = 0;
     stringstream iknight(knight_data);
     while (iknight.good() && b < digitsCount(knight_data)) {
@@ -374,7 +374,7 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
 
     // split line 2 into an array for route data
     string sroute = data[1];
-    int route[] = {};
+    int route[100] = {};
     int c = 0;
     stringstream iroute(sroute);
     while (iroute.good() && c < digitsCount(sroute)) {
@@ -449,47 +449,57 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                     case 5: // Troll (event code = 5)
                         if (Lancelot) { // if the knight is Lancelot then always win
                             level += 1;
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         } else {
                             easyOpponents(i, level, HP, maxHP, phoenixdown, rescue, route[i]);
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         }
                             
                     // Shaman (event code = 6)
                     case 6:
                         if (i >= (SirenVajshExpiry - 3) && i < SirenVajshExpiry) { // if the knight is affected by Siren Vajsh then skip
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         } else {
                             ShamanWitch(i, level, HP, maxHP, phoenixdown, remedy, rescue, route[i], ShamanExpiry);
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         }
 
                     // Siren Vajsh (event code = 7)
                     case 7:
                         if (i >= (ShamanExpiry - 3) && i < ShamanExpiry) { // if the knight is affected by Shaman then skip
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         } else {
                             SirenVajsh(i, level, HP, maxHP, phoenixdown, remedy, maidenkiss, rescue, route[i], SirenVajshExpiry, beforeFrog);
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         }
 
                     // Mush Mario (event code = 11)
                     case 11:  
                         MushMario(HP, maxHP, level, phoenixdown);
+                        display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                         break;
 
                     // Mush Fibonacci (event code = 12)
                     case 12:
                         MushFibo(HP);
+                        display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                         break;
 
                     // Remedy (event code = 15)
                     case 15:
                         if (i >= (ShamanExpiry - 3) && i < ShamanExpiry) {
                             remedyUse(HP, maxHP);
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         } else {
                             remedyPick(remedy);
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         }
 
@@ -497,15 +507,18 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                     case 16:
                         if (i >= (SirenVajshExpiry - 3) && i < SirenVajshExpiry) {
                             maidenkissUse(level, beforeFrog);
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         } else {
                             maidenkissPick(maidenkiss);
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         }
 
                     // Phoenix Down (event code = 17)
                     case 17:
                         phoenixdownPick(phoenixdown);
+                        display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                         break;
 
                     // Merlin (event code = 18)
@@ -515,11 +528,14 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                                 if (file_merlin_pack == "<file_merlin_pack>") {
                                     Merlin(file_merlin_pack, HP, maxHP); 
                                     MerlinAvail = 0;
+                                    display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                                     break;
                                 } else {
+                                    display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                                     break;
                                 }
                             case 0:
+                                display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                                 break;
                         }
                             
@@ -530,11 +546,14 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                                 if (file_asclepius_pack == "<file_asclepius_pack>") {
                                     asclepius(file_asclepius_pack, HP, maxHP, remedy, maidenkiss, phoenixdown);
                                     AsclepiusAvail = 0;
+                                    display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                                     break;
                                 } else {
+                                    display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                                     break;
                                 }
                             case 0:
+                                display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                                 break;
                         }
 
@@ -542,19 +561,22 @@ void adventureToKoopa(string file_input, int & HP, int & level, int & remedy, in
                     case 99:
                         if (maxHP == 999) {
                             level = 10;
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         } else if (Lancelot == true && level >= 8) {
                             level = 10;
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         } else if (level == 10) {
+                            display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                             break;
                         }
                     default:
+                        display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
                         break;
                 }
             }         
         }
     }
-    display(HP, level, remedy, maidenkiss, phoenixdown, rescue);
 }
 
